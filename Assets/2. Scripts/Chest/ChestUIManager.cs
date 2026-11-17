@@ -1,13 +1,14 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ChestUIManager : MonoBehaviour
 {
     public static ChestUIManager Instance;
 
     [SerializeField] GameObject chestUI;
-    [SerializeField] Transform itemSlotParent; // UI 슬롯 부모
-    [SerializeField] GameObject itemSlotPrefab; // UI 슬롯 프리팹
+    [SerializeField] Transform itemSlotParent;
+    [SerializeField] GameObject chestSlotPrefab;
+
+    public bool IsChestOpen => chestUI.activeSelf;
 
     void Awake()
     {
@@ -26,30 +27,31 @@ public class ChestUIManager : MonoBehaviour
     {
         chestUI.SetActive(true);
 
-        // 기존 슬롯 초기화
-        foreach (Transform child in itemSlotParent)
-        {
-            Destroy(child.gameObject);
-        }
-
-        // ChestData의 아이템 표시
-        foreach (var stack in chest.currentItems)
-        {
-            var slot = Instantiate(itemSlotPrefab, itemSlotParent);
-            slot.GetComponentInChildren<Image>().sprite = stack.item.icon;
-
-            // 클릭하면 인벤토리로 추가
-            slot.GetComponent<Button>().onClick.AddListener(() =>
-            {
-                PlayerInventory.Instance.AddItem(stack.item);
-                chest.currentItems.Remove(stack);
-                Destroy(slot);
-            });
-        }
+        RefreshUI(chest);
     }
 
     public void CloseChestUI()
     {
         chestUI.SetActive(false);
+
+        ItemTooltipUI.Instance.Hide(); // 체스트 UI 닫을 때 툴팁도 숨김
+    }
+
+    void RefreshUI(Chest chest)
+    {
+        foreach (Transform child in itemSlotParent)
+            Destroy(child.gameObject);
+
+        foreach (var stack in chest.currentItems)
+        {
+            GameObject slotObj = Instantiate(chestSlotPrefab, itemSlotParent);
+            ChestSlotUI slotUI = slotObj.GetComponent<ChestSlotUI>();
+            slotUI.Init(stack, chest);
+        }
+    }
+
+    public void RefreshChestUI(Chest chest)
+    {
+        RefreshUI(chest);
     }
 }

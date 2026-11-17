@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0fae749cf2a1bb448ddc629cbb3618c, type: 3}
+  m_Name: TestChestData
+  m_EditorClassIdentifier: Assembly-CSharp::ChestData
+  itemTable:
+  - {fileID: 11400000, guid: bc1aad62db2147a4d8a3cd6d61ff0195, type: 2}
+  - {fileID: 11400000, guid: f41c19eb985874142af02310dc6cdb06, type: 2}
+  - {fileID: 11400000, guid: 14cffddc1649f234eba07df94f542166, type: 2}
+  - {fileID: 11400000, guid: 2d5566641a46a1e4e915201cd0e20bcf, type: 2}
+  - {fileID: 11400000, guid: 4f590a873dfda064999f74bdcec0b3ab, type: 2}
+  slotCount: 8
+  minItemCount: 1
+  maxItemCount: 8

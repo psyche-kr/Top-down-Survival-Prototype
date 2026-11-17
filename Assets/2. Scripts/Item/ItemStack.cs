@@ -2,11 +2,19 @@
 public class ItemStack
 {
     public Item item;
-    public int count;
+    public int amount;
 
-    public ItemStack(Item item, int count)
+    public bool IsEmpty => item == null;
+
+    public ItemStack()
+    {
+        item = null;
+        amount = 0;
+    }
+
+    public ItemStack(Item item, int amount)
     {
         this.item = item;
-        this.count = count;
+        this.amount = amount;
     }
 }

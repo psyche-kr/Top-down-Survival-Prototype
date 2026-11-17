@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0fae749cf2a1bb448ddc629cbb3618c, type: 3}
   m_Name: ChestData
   m_EditorClassIdentifier: Assembly-CSharp::ChestData
-  possibleItems:
+  itemTable:
   - {fileID: 11400000, guid: bc1aad62db2147a4d8a3cd6d61ff0195, type: 2}
   - {fileID: 11400000, guid: f41c19eb985874142af02310dc6cdb06, type: 2}
   - {fileID: 11400000, guid: 14cffddc1649f234eba07df94f542166, type: 2}
@@ -48,5 +48,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 55ad5c6ea50b79147b6f307058dabb54, type: 2}
   - {fileID: 11400000, guid: 5aeb6be5cd342564c9d1f1d0981962f1, type: 2}
   - {fileID: 11400000, guid: b9d174dd848b6464588c83fb6ce7a6c1, type: 2}
-  minChestItemSlot: 1
-  maxChestItemSlot: 8
+  slotCount: 8
+  minItemCount: 1
+  maxItemCount: 8

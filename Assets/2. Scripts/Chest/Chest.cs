@@ -4,9 +4,10 @@ using System.Collections.Generic;
 public class Chest : MonoBehaviour, IInteractable
 {
     [SerializeField] ChestData data;
-    public List<ItemStack> currentItems = new List<ItemStack>();
-    Collider chestCollider;
 
+    public List<ItemStack> currentItems = new List<ItemStack>();
+
+    Collider chestCollider;
     bool isOpen = false;
     Transform player;
     Vector3 openPlayerPosition;
@@ -15,6 +16,7 @@ public class Chest : MonoBehaviour, IInteractable
     public ChestData GetData() => data;
     public Collider GetCollider() => chestCollider;
     public float GetInteractRange() => 0.6f;
+
     public void Interact(Character character)
     {
         Open();
@@ -23,16 +25,39 @@ public class Chest : MonoBehaviour, IInteractable
     void Awake()
     {
         chestCollider = GetComponent<Collider>();
-
         player = GameObject.FindWithTag("Player").transform;
+
+        InitializeSlots();
         GenerateRandomItems();
+    }
+
+    void InitializeSlots()
+    {
+        currentItems.Clear();
+
+        for (int i = 0; i < data.slotCount; i++)
+        {
+            currentItems.Add(new ItemStack()); // ºó ½½·Ô
+        }
+    }
+
+    void GenerateRandomItems()
+    {
+        int itemCount = Random.Range(data.minItemCount, data.maxItemCount + 1);
+
+        for (int i = 0; i < itemCount && i < currentItems.Count; i++)
+        {
+            Item randomItem = data.itemTable[Random.Range(0, data.itemTable.Length)];
+            currentItems[i] = new ItemStack(randomItem, 1);
+        }
     }
 
     void Update()
     {
         if (isOpen && player != null)
         {
-            if ((player.position - openPlayerPosition).sqrMagnitude > positionTolerance * positionTolerance)
+            if ((player.position - openPlayerPosition).sqrMagnitude >
+                positionTolerance * positionTolerance)
             {
                 Close();
             }
@@ -50,17 +75,5 @@ public class Chest : MonoBehaviour, IInteractable
     {
         ChestUIManager.Instance.CloseChestUI();
         isOpen = false;
-    }
-
-    void GenerateRandomItems()
-    {
-        currentItems.Clear();
-        int count = Random.Range(data.minChestItemSlot, data.maxChestItemSlot + 1);
-        
-        for (int i = 0; i < count;i++)
-        {
-            Item randomIten = data.possibleItems[Random.Range(0, data.possibleItems.Length)];
-            currentItems.Add(new ItemStack(randomIten, 1));
-        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -25,8 +26,20 @@ public class PlayerInput : MonoBehaviour
 
     void Update()
     {
+        // UI에는 이동 안되게
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         bool hasHit = Physics.Raycast(ray, out RaycastHit hit);
+
+        // UI가 아닌 곳을 왼클릭할때 상자 닫히게
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (!EventSystem.current.IsPointerOverGameObject())
+            {
+                ChestUIManager.Instance.CloseChestUI();
+            }
+        }
 
         // 오브젝트 외곽선
         if (hasHit)
@@ -97,5 +110,14 @@ public class PlayerInput : MonoBehaviour
             currentOutline.SetOutline(false);
             currentOutline = null;
         }
+    }
+
+    bool IsPointerOverBlockUI()
+    {
+        // UI가 있으면 이동 안되게 하는 함수
+
+        if (EventSystem.current == null) return false;
+        
+        return EventSystem.current.IsPointerOverGameObject();
     }
 }

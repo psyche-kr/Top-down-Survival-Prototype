@@ -1,6 +1,13 @@
 using TMPro;
 using UnityEngine;
 
+public enum TooltipOwner
+{
+    None,
+    Inventory,
+    Chest
+}
+
 public class ItemTooltipUI : MonoBehaviour
 {
     public static ItemTooltipUI Instance;
@@ -10,8 +17,12 @@ public class ItemTooltipUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI descriptionText;
     [SerializeField] TextMeshProUGUI itemTypeText;
 
+    TooltipOwner currentOwner = TooltipOwner.None;
     bool isFollowing = false;
+
     [SerializeField] Vector3 tooltipOffset = new Vector3();
+
+    public TooltipOwner CurrentOwner => currentOwner;
 
     void Awake()
     {
@@ -27,10 +38,12 @@ public class ItemTooltipUI : MonoBehaviour
         }
     }
 
-    public void Show(Item item)
+    public void Show(Item item, TooltipOwner owner)
     {
         tooltipPanel.SetActive(true);
+
         isFollowing = true;
+        currentOwner = owner;
 
         nameText.text = item.itemName;
         descriptionText.text = item.description;
@@ -42,58 +55,34 @@ public class ItemTooltipUI : MonoBehaviour
     public void Hide()
     {
         tooltipPanel.SetActive(false);
+
         isFollowing = false;
+        currentOwner = TooltipOwner.None;
     }
 
     void SetNameColor(ItemRarity rarity)
     {
-        Color rarityColor = Color.white;
-
-        switch (rarity)
+        Color color = rarity switch
         {
-            case ItemRarity.Mythic:
-                rarityColor = Color.red;
-                break;
-
-            case ItemRarity.Legendary:
-                rarityColor = Color.yellow;
-                break;
-
-            case ItemRarity.Epic:
-                rarityColor = new Color(0.6f, 0f, 1f);
-                break;
-
-            case ItemRarity.Rare:
-                rarityColor = Color.blue;
-                break;
-
-            case ItemRarity.Uncommon:
-                rarityColor = Color.green;
-                break;
-
-            case ItemRarity.Common:
-                rarityColor = Color.white;
-                break;
-        }
-        nameText.color = rarityColor;
+            ItemRarity.Mythic => Color.red,
+            ItemRarity.Legendary => Color.yellow,
+            ItemRarity.Epic => new Color(0.6f, 0f, 1f),
+            ItemRarity.Rare => Color.blue,
+            ItemRarity.Uncommon => Color.green,
+            _ => Color.white
+        };
+        nameText.color = color;
     }
 
     void SetItemTypeText(ItemType type)
     {
-        switch (type)
+        itemTypeText.text = type switch
         {
-            case ItemType.Consumable:
-                itemTypeText.text = "소모품";
-                break;
-
-            case ItemType.Equipment:
-                itemTypeText.text = "장비";
-                break;
-
-            case ItemType.Material:
-                itemTypeText.text = "재료";
-                break;
-        }
+            ItemType.Consumable => "소모품",
+            ItemType.Equipment => "장비",
+            ItemType.Material => "재료",
+            _ => ""
+        };
         itemTypeText.color = new Color(0.7f, 0.7f, 0.75f);
     }
 }

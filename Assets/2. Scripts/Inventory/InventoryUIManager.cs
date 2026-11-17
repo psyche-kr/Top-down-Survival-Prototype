@@ -1,14 +1,14 @@
+using System.Diagnostics;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
+using UnityEngine.Rendering;
 
 public class InventoryUIManager : MonoBehaviour
 {
     public static InventoryUIManager Instance;
 
-    [SerializeField] GameObject inventoryUI; 
-    [SerializeField] Transform itemSlotParent; // 그리드 레이아웃이 붙은 오브젝트
-    [SerializeField] GameObject itemSlotPrefab;
+    [SerializeField] GameObject inventoryUI;
+    [SerializeField] Transform itemSlotParent;
+    [SerializeField] GameObject inventorySlotPrefab;
 
     void Awake() => Instance = this;
 
@@ -33,34 +33,29 @@ public class InventoryUIManager : MonoBehaviour
     {
         inventoryUI.SetActive(false);
 
-        if (ItemTooltipUI.Instance != null)
+        if (ItemTooltipUI.Instance != null && 
+            ItemTooltipUI.Instance.CurrentOwner == TooltipOwner.Inventory)
         {
-            ItemTooltipUI.Instance.Hide();
+            ItemTooltipUI.Instance.Hide(); 
         }
     }
 
     public void RefreshUI()
     {
-        // 기존 슬롯 삭제
+        if(!inventoryUI.activeSelf) return; // 인벤토리가 닫혀있어도 갱신하려는거 방지
+
         foreach (Transform child in itemSlotParent)
             Destroy(child.gameObject);
 
-        // PlayerInventory 데이터 가져오기
-        foreach (var stack in PlayerInventory.Instance.items)
+        foreach (var stack in PlayerInventoryManager.Instance.items)
         {
-            GameObject slotObj = Instantiate(itemSlotPrefab, itemSlotParent);
-            ItemSlotUI slotUI = slotObj.GetComponent<ItemSlotUI>();
-            slotUI.SetData(stack);
+            GameObject slotObj = Instantiate(inventorySlotPrefab, itemSlotParent);
+            InventorySlotUI slotUI = slotObj.GetComponent<InventorySlotUI>();
 
-            // 아이템 클릭시 이벤트
-            Button button = slotObj.GetComponent<Button>();
-            if (button != null)
-            {
-                button.onClick.AddListener(() =>
-                {
-                    // 클릭로직
-                });
-            }
+            if (stack != null && stack.item != null)
+                slotUI.Init(stack);
+            else
+                slotUI.Init(null);  // 빈 슬롯 처리
         }
     }
 }

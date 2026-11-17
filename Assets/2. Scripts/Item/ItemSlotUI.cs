@@ -1,40 +1,37 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
-public class ItemSlotUI : MonoBehaviour,IPointerEnterHandler, IPointerExitHandler
+public class ItemSlotUI : MonoBehaviour
 {
-    [SerializeField] Image icon;
-    [SerializeField] Text countText;
+    [SerializeField] Image iconImage;
+    [SerializeField] Text amountText;
 
-    Item currentItem;
+    ItemStack currentStack;
 
     public void SetData(ItemStack stack)
     {
-        currentItem = stack.item;
-        icon.sprite = stack.item.icon;
+        currentStack = stack;
 
-        if (stack.count > 1)
+        if (stack == null || stack.IsEmpty)
         {
-            countText.text = stack.count.ToString();
-            countText.gameObject.SetActive(true);
+            iconImage.enabled = false;
+            amountText.gameObject.SetActive(false);
+            return;
+        }
+
+        iconImage.enabled = true;
+        iconImage.sprite = stack.item.icon;
+
+        if (stack.amount > 1)
+        {
+            amountText.gameObject.SetActive(true);
+            amountText.text = stack.amount.ToString();
         }
         else
         {
-            countText.gameObject.SetActive(false);
+            amountText.gameObject.SetActive(false);
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (currentItem != null)
-        {
-            ItemTooltipUI.Instance.Show(currentItem);
-        }
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        ItemTooltipUI.Instance.Hide();
-    }
+    public ItemStack GetStack() => currentStack;
 }
