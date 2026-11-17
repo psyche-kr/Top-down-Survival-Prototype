@@ -17,7 +17,7 @@ public class ChestUIManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && chestUI.activeSelf)
+        if (GameInput.Cancel.WasPressedThisFrame() && chestUI.activeSelf)
         {
             CloseChestUI();
         }
@@ -34,7 +34,7 @@ public class ChestUIManager : MonoBehaviour
     {
         chestUI.SetActive(false);
 
-        ItemTooltipUI.Instance.Hide(); // Ã¼½ºÆ® UI ´İÀ» ¶§ ÅøÆÁµµ ¼û±è
+        ItemTooltipUI.Instance.Hide(); // ì²´ìŠ¤íŠ¸ UI ë‹«ì„ ë•Œ íˆ´íŒë„ ìˆ¨ê¹€
     }
 
     void RefreshUI(Chest chest)

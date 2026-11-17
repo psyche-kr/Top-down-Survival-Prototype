@@ -1,6 +1,3 @@
-using System.Diagnostics;
-using UnityEngine;
-using UnityEngine.Rendering;
 
 public class InventoryUIManager : MonoBehaviour
 {
@@ -14,7 +11,7 @@ public class InventoryUIManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (GameInput.ToggleInventory.WasPressedThisFrame())
         {
             if (inventoryUI.activeSelf)
                 CloseInventory();
@@ -42,7 +39,7 @@ public class InventoryUIManager : MonoBehaviour
 
     public void RefreshUI()
     {
-        if(!inventoryUI.activeSelf) return; // ÀÎº¥Åä¸®°¡ ´İÇôÀÖ¾îµµ °»½ÅÇÏ·Á´Â°Å ¹æÁö
+        if(!inventoryUI.activeSelf) return; // ì¸ë²¤í† ë¦¬ê°€ ë‹«í˜€ìˆì–´ë„ ê°±ì‹ í•˜ë ¤ëŠ”ê±° ë°©ì§€
 
         foreach (Transform child in itemSlotParent)
             Destroy(child.gameObject);
@@ -55,7 +52,7 @@ public class InventoryUIManager : MonoBehaviour
             if (stack != null && stack.item != null)
                 slotUI.Init(stack);
             else
-                slotUI.Init(null);  // ºó ½½·Ô Ã³¸®
+                slotUI.Init(null);  // ë¹ˆ ìŠ¬ë¡¯ ì²˜ë¦¬
         }
     }
 }

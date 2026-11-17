@@ -37,7 +37,7 @@ public class Chest : MonoBehaviour, IInteractable
 
         for (int i = 0; i < data.slotCount; i++)
         {
-            currentItems.Add(new ItemStack()); // ºó ½½·Ô
+            currentItems.Add(new ItemStack()); // ë¹ˆ ìŠ¬ë¡¯
         }
     }
 

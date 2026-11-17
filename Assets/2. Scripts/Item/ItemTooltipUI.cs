@@ -34,7 +34,7 @@ public class ItemTooltipUI : MonoBehaviour
     {
         if (isFollowing)
         {
-            tooltipPanel.transform.position = Input.mousePosition + tooltipOffset;
+            tooltipPanel.transform.position = (Vector3)GameInput.PointerPosition + tooltipOffset;
         }
     }
 
@@ -78,9 +78,9 @@ public class ItemTooltipUI : MonoBehaviour
     {
         itemTypeText.text = type switch
         {
-            ItemType.Consumable => "¼Ò¸ðÇ°",
-            ItemType.Equipment => "Àåºñ",
-            ItemType.Material => "Àç·á",
+            ItemType.Consumable => "ì†Œëª¨í’ˆ",
+            ItemType.Equipment => "ìž¥ë¹„",
+            ItemType.Material => "ìž¬ë£Œ",
             _ => ""
         };
         itemTypeText.color = new Color(0.7f, 0.7f, 0.75f);

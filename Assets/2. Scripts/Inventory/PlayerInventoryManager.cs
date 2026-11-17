@@ -28,7 +28,7 @@ public class PlayerInventoryManager : MonoBehaviour
 
         int remaining = count;
 
-        // ±âÁ¸ ½ºÅÃ ¸ÕÀú Ã¤¿ì±â
+        // ê¸°ì¡´ ìŠ¤íƒ ë¨¼ì € ì±„ìš°ê¸°
         foreach (var stack in items)
         {
             if (stack == null || stack.IsEmpty) continue;
@@ -47,7 +47,7 @@ public class PlayerInventoryManager : MonoBehaviour
                 break;
         }
 
-        // ³²Àº ¼ö·®À¸·Î »õ ½ºÅÃ »ý¼º
+        // ë‚¨ì€ ìˆ˜ëŸ‰ìœ¼ë¡œ ìƒˆ ìŠ¤íƒ ìƒì„±
         while (remaining > 0)
         {
             int addAmount = Mathf.Min(item.maxStack, remaining);

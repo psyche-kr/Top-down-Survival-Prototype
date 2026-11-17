@@ -26,8 +26,8 @@ public class InventorySlotUI :
 
     void OnClick()
     {
-        Debug.Log("ÀÎº¥Åä¸® ¾ÆÀÌÅÛ Å¬¸¯µÊ");
-        // ÀåÂø, Å¬¸¯, µå·¡±×, »ç¿ë µî
+        Debug.Log("ì¸ë²¤í† ë¦¬ ì•„ì´í…œ í´ë¦­ë¨");
+        // ì¥ì°©, í´ë¦­, ë“œë˜ê·¸, ì‚¬ìš© ë“±
     }
 
     public void OnPointerEnter(PointerEventData eventData)

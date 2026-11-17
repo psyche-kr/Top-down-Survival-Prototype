@@ -45,20 +45,20 @@ public class ChestSlotUI :
         if (stack == null || stack.IsEmpty)
             return;
 
-        // ¾ÆÀÌÅÛ È¹µæ °¡´ÉÇÑÁö È®ÀÎ (ÀÎº¥Åä¸® °ø°£ Ã¼Å©)
+        // ì•„ì´í…œ íšë“ ê°€ëŠ¥í•œì§€ í™•ì¸ (ì¸ë²¤í† ë¦¬ ê³µê°„ ì²´í¬)
         bool success = PlayerInventoryManager.Instance.AddItem(stack.item);
         if (!success) return;
 
-        // ¾ÆÀÌÅÛ È¹µæ½Ã ½½·Ô ¹Ğ±â
+        // ì•„ì´í…œ íšë“ì‹œ ìŠ¬ë¡¯ ë°€ê¸°
         int index = currentChest.currentItems.IndexOf(stack); 
         if (index < 0) return;
         currentChest.currentItems.RemoveAt(index);
 
-        // ½½·Ô ¹Î ÈÄ¿¡ ºó ½½·Ô Ãß°¡
+        // ìŠ¬ë¡¯ ë¯¼ í›„ì— ë¹ˆ ìŠ¬ë¡¯ ì¶”ê°€
         currentChest.currentItems.Add(new ItemStack()); 
 
-        ChestUIManager.Instance.RefreshChestUI(currentChest); // UI °»½Å
-        ItemTooltipUI.Instance.Hide(); // ÅøÆÁ ¼û±â±â
+        ChestUIManager.Instance.RefreshChestUI(currentChest); // UI ê°±ì‹ 
+        ItemTooltipUI.Instance.Hide(); // íˆ´íŒ ìˆ¨ê¸°ê¸°
     }
 
     public void OnPointerEnter(PointerEventData eventData)
