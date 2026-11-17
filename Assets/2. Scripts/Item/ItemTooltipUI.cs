@@ -23,7 +23,7 @@ public class ItemTooltipUI : MonoBehaviour
     {
         if (isFollowing)
         {
-            tooltipPanel.transform.position = Input.mousePosition + tooltipOffset;
+            tooltipPanel.transform.position = (Vector3)GameInput.PointerPosition + tooltipOffset;
         }
     }
 
@@ -83,15 +83,15 @@ public class ItemTooltipUI : MonoBehaviour
         switch (type)
         {
             case ItemType.Consumable:
-                itemTypeText.text = "¼Ò¸ðÇ°";
+                itemTypeText.text = "ì†Œëª¨í’ˆ";
                 break;
 
             case ItemType.Equipment:
-                itemTypeText.text = "Àåºñ";
+                itemTypeText.text = "ìž¥ë¹„";
                 break;
 
             case ItemType.Material:
-                itemTypeText.text = "Àç·á";
+                itemTypeText.text = "ìž¬ë£Œ";
                 break;
         }
         itemTypeText.color = new Color(0.7f, 0.7f, 0.75f);

@@ -6,8 +6,8 @@ public class ChestUIManager : MonoBehaviour
     public static ChestUIManager Instance;
 
     [SerializeField] GameObject chestUI;
-    [SerializeField] Transform itemSlotParent; // UI ½½·Ô ºÎ¸ğ
-    [SerializeField] GameObject itemSlotPrefab; // UI ½½·Ô ÇÁ¸®ÆÕ
+    [SerializeField] Transform itemSlotParent; // UI ìŠ¬ë¡¯ ë¶€ëª¨
+    [SerializeField] GameObject itemSlotPrefab; // UI ìŠ¬ë¡¯ í”„ë¦¬íŒ¹
 
     void Awake()
     {
@@ -16,7 +16,7 @@ public class ChestUIManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && chestUI.activeSelf)
+        if (GameInput.Cancel.WasPressedThisFrame() && chestUI.activeSelf)
         {
             CloseChestUI();
         }
@@ -26,19 +26,19 @@ public class ChestUIManager : MonoBehaviour
     {
         chestUI.SetActive(true);
 
-        // ±âÁ¸ ½½·Ô ÃÊ±âÈ­
+        // ê¸°ì¡´ ìŠ¬ë¡¯ ì´ˆê¸°í™”
         foreach (Transform child in itemSlotParent)
         {
             Destroy(child.gameObject);
         }
 
-        // ChestDataÀÇ ¾ÆÀÌÅÛ Ç¥½Ã
+        // ChestDataì˜ ì•„ì´í…œ í‘œì‹œ
         foreach (var stack in chest.currentItems)
         {
             var slot = Instantiate(itemSlotPrefab, itemSlotParent);
             slot.GetComponentInChildren<Image>().sprite = stack.item.icon;
 
-            // Å¬¸¯ÇÏ¸é ÀÎº¥Åä¸®·Î Ãß°¡
+            // í´ë¦­í•˜ë©´ ì¸ë²¤í† ë¦¬ë¡œ ì¶”ê°€
             slot.GetComponent<Button>().onClick.AddListener(() =>
             {
                 PlayerInventory.Instance.AddItem(stack.item);

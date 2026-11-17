@@ -7,14 +7,14 @@ public class InventoryUIManager : MonoBehaviour
     public static InventoryUIManager Instance;
 
     [SerializeField] GameObject inventoryUI; 
-    [SerializeField] Transform itemSlotParent; // ±◊∏ÆµÂ ∑π¿Ãæ∆øÙ¿Ã ∫Ÿ¿∫ ø¿∫Í¡ß∆Æ
+    [SerializeField] Transform itemSlotParent; // Í∑∏Î¶¨Îìú Î†àÏù¥ÏïÑÏõÉÏù¥ Î∂ôÏùÄ Ïò§Î∏åÏ†ùÌä∏
     [SerializeField] GameObject itemSlotPrefab;
 
     void Awake() => Instance = this;
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (GameInput.ToggleInventory.WasPressedThisFrame())
         {
             if (inventoryUI.activeSelf)
                 CloseInventory();
@@ -41,24 +41,24 @@ public class InventoryUIManager : MonoBehaviour
 
     public void RefreshUI()
     {
-        // ±‚¡∏ ΩΩ∑‘ ªË¡¶
+        // Í∏∞Ï°¥ Ïä¨Î°Ø ÏÇ≠Ï†ú
         foreach (Transform child in itemSlotParent)
             Destroy(child.gameObject);
 
-        // PlayerInventory µ•¿Ã≈Õ ∞°¡Æø¿±‚
+        // PlayerInventory Îç∞Ïù¥ÌÑ∞ Í∞ÄÏ†∏Ïò§Í∏∞
         foreach (var stack in PlayerInventory.Instance.items)
         {
             GameObject slotObj = Instantiate(itemSlotPrefab, itemSlotParent);
             ItemSlotUI slotUI = slotObj.GetComponent<ItemSlotUI>();
             slotUI.SetData(stack);
 
-            // æ∆¿Ã≈€ ≈¨∏ØΩ√ ¿Ã∫•∆Æ
+            // ÏïÑÏù¥ÌÖú ÌÅ¥Î¶≠Ïãú Ïù¥Î≤§Ìä∏
             Button button = slotObj.GetComponent<Button>();
             if (button != null)
             {
                 button.onClick.AddListener(() =>
                 {
-                    // ≈¨∏Ø∑Œ¡˜
+                    // ÌÅ¥Î¶≠Î°úÏßÅ
                 });
             }
         }

@@ -2,19 +2,19 @@ using UnityEngine;
 
 public enum ItemType
 {
-    Consumable, // ¼Ò¸ğ
-    Equipment, // Àåºñ
-    Material // Àç·á
+    Consumable, // ì†Œëª¨
+    Equipment, // ì¥ë¹„
+    Material // ì¬ë£Œ
 }
 
 public enum ItemRarity
 {
-    Mythic,     // ÃÊ¿ù (»¡°­)
-    Legendary,  // Àü¼³ (³ë¶û)
-    Epic,       // ¿µ¿õ (º¸¶ó)
-    Rare,       // Èñ±Í (ÆÄ¶û)
-    Uncommon,   // °í±Ş (ÃÊ·Ï)
-    Common      // ÀÏ¹İ (Èò»ö)
+    Mythic,     // ì´ˆì›” (ë¹¨ê°•)
+    Legendary,  // ì „ì„¤ (ë…¸ë‘)
+    Epic,       // ì˜ì›… (ë³´ë¼)
+    Rare,       // í¬ê·€ (íŒŒë‘)
+    Uncommon,   // ê³ ê¸‰ (ì´ˆë¡)
+    Common      // ì¼ë°˜ (í°ìƒ‰)
 }
 
 [CreateAssetMenu(menuName = "Item/Item")]

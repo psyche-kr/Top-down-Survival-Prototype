@@ -60,12 +60,12 @@ public class CameraController : MonoBehaviour
 
     void CameraToggle()
     {
-        if (Input.GetKeyDown(KeyCode.Y))
+        if (GameInput.CameraFollowToggle.WasPressedThisFrame())
         {
             cameraToggle = !cameraToggle;
         }
 
-        isFollowing = Input.GetKey(KeyCode.Space) || cameraToggle;
+        isFollowing = GameInput.CameraFollowHold.IsPressed() || cameraToggle;
     }
 
     void CameraMove()
@@ -75,7 +75,7 @@ public class CameraController : MonoBehaviour
 
     Vector3 GetEdgeDirection()
     {
-        Vector3 mouse = Input.mousePosition;
+        Vector2 mouse = GameInput.PointerPosition;
         Vector3 dir = Vector3.zero;
 
         if (mouse.y >= Screen.height - borderSize) dir.z += 1; // 상

@@ -17,6 +17,8 @@
 - **상호작용**: 상호작용이 가능한 오브젝트는 `IInteractable` 인터페이스를 구현합니다. 우클릭한 대상이 `IInteractable`이면 `Character.MoveAndInteract`가 대상 콜라이더의 가장 가까운 지점까지 이동시키고, 상호작용 거리 안에 들어오면 `Interact`를 호출한 뒤 멈춥니다. 상자 외에 다른 오브젝트도 인터페이스만 구현하면 같은 방식으로 붙습니다.
 - **오브젝트 외곽선**: 마우스를 올린 오브젝트에 외곽선을 표시합니다(`ObjectOutline`). 메시를 복제해 1.1배로 키우고 앞면을 컬링해서 테두리만 보이게 했고, 외곽선 오브젝트는 `Ignore Raycast` 레이어에 두어 클릭 판정을 가리지 않게 했습니다.
 
+- **입력**: Unity Input System만 사용합니다(Active Input Handling = Input System Package). 키 바인딩은 `GameInput`(`Assets/2. Scripts/Input`)에 모아 두고, 다른 스크립트는 `GameInput.Move.IsPressed()`처럼 액션만 읽습니다. 플레이어 입력은 `PlayerInputHandler`가 받아 `Character`에 명령으로 넘깁니다.
+
 ### 카메라 (`CameraController`)
 
 - 화면 가장자리에 마우스를 가져가면 그 방향으로 카메라가 움직이고(대각선은 정규화), 맵 범위를 벗어나지 않도록 값을 제한합니다.
@@ -30,9 +32,11 @@
 
 ## 앞으로 할 일
 
-- 공격과 스킬 (`PlayerInput`에 `A` 키 공격 자리만 잡아 둔 상태)
+- 공격과 스킬 (`GameInput.Attack`에 `A` 키 자리만 잡아 둔 상태)
 - 적 AI와 체력
 - 인벤토리 아이템 사용, 장비 장착
+
+- 멀티플레이: Netcode for GameObjects 사용 예정
 
 ## 참고
 

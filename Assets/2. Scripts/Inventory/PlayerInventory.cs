@@ -15,7 +15,7 @@ public class PlayerInventory : MonoBehaviour
 
         int remaining = count;
 
-        // ±âÁ¸ ½ºÅÃ ¸ÕÀú Ã¤¿ì±â
+        // ê¸°ì¡´ ìŠ¤íƒ ë¨¼ì € ì±„ìš°ê¸°
         foreach (var stack in items)
         {
             if (stack.item.itemName != item.itemName) continue;
@@ -31,7 +31,7 @@ public class PlayerInventory : MonoBehaviour
                 break;
         }
 
-        // ³²Àº ¼ö·®À¸·Î »õ ½ºÅÃ »ı¼º
+        // ë‚¨ì€ ìˆ˜ëŸ‰ìœ¼ë¡œ ìƒˆ ìŠ¤íƒ ìƒì„±
         while(remaining > 0)
         {
             int addAmount = Mathf.Min(item.maxStack, remaining);
@@ -39,7 +39,7 @@ public class PlayerInventory : MonoBehaviour
             remaining -= addAmount;
         }
 
-        // ÀÎº¥Åä¸®¸¦ ¿¬ »óÅÂ¿¡¼­ ¾ÆÀÌÅÛ È¹µæÇÒ¶§ ¹İ¿µµÇµµ·Ï UI °»½Å
+        // ì¸ë²¤í† ë¦¬ë¥¼ ì—° ìƒíƒœì—ì„œ ì•„ì´í…œ íšë“í• ë•Œ ë°˜ì˜ë˜ë„ë¡ UI ê°±ì‹ 
         InventoryUIManager.Instance?.RefreshUI();
     }
 }
