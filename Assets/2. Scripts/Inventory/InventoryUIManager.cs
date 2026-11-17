@@ -1,5 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 화면 오른쪽 아래에 항상 떠 있는 인벤토리 UI. 슬롯 10개를 한 번만 만들고 데이터만 갱신한다.
+/// (드래그 중에 슬롯이 파괴되지 않도록 다시 만들지 않는다)
+/// </summary>
 public class InventoryUIManager : MonoBehaviour
 {
     public static InventoryUIManager Instance;
@@ -8,52 +13,48 @@ public class InventoryUIManager : MonoBehaviour
     [SerializeField] Transform itemSlotParent;
     [SerializeField] GameObject inventorySlotPrefab;
 
+    readonly List<InventorySlotUI> slots = new List<InventorySlotUI>();
+
+    /// <summary>인벤토리 패널 (툴팁 위치 기준).</summary>
+    public RectTransform PanelRect => (RectTransform)inventoryUI.transform;
+
     void Awake() => Instance = this;
 
-    void Update()
-    {
-        if (GameInput.ToggleInventory.WasPressedThisFrame())
-        {
-            if (inventoryUI.activeSelf)
-                CloseInventory();
-            else
-                OpenInventory();
-        }
-    }
-
-    public void OpenInventory()
+    void Start()
     {
         inventoryUI.SetActive(true);
+        BuildSlots();
         RefreshUI();
     }
 
-    public void CloseInventory()
+    void BuildSlots()
     {
-        inventoryUI.SetActive(false);
+        foreach (Transform child in itemSlotParent)
+            Destroy(child.gameObject);
 
-        if (ItemTooltipUI.Instance != null && 
-            ItemTooltipUI.Instance.CurrentOwner == TooltipOwner.Inventory)
+        slots.Clear();
+
+        for (int i = 0; i < PlayerInventoryManager.Instance.Size; i++)
         {
-            ItemTooltipUI.Instance.Hide(); 
+            GameObject slotObj = Instantiate(inventorySlotPrefab, itemSlotParent);
+            slotObj.name = $"InventorySlot {i}";
+
+            InventorySlotUI slotUI = slotObj.GetComponent<InventorySlotUI>();
+            slotUI.Setup(i);
+            slots.Add(slotUI);
         }
     }
 
     public void RefreshUI()
     {
-        if(!inventoryUI.activeSelf) return; // 인벤토리가 닫혀있어도 갱신하려는거 방지
+        for (int i = 0; i < slots.Count; i++)
+            slots[i].SetData(PlayerInventoryManager.Instance.GetSlot(i));
+    }
 
-        foreach (Transform child in itemSlotParent)
-            Destroy(child.gameObject);
-
-        foreach (var stack in PlayerInventoryManager.Instance.items)
-        {
-            GameObject slotObj = Instantiate(inventorySlotPrefab, itemSlotParent);
-            InventorySlotUI slotUI = slotObj.GetComponent<InventorySlotUI>();
-
-            if (stack != null && stack.item != null)
-                slotUI.Init(stack);
-            else
-                slotUI.Init(null);  // 빈 슬롯 처리
-        }
+    /// <summary>화면 좌표가 인벤토리 패널 안인지.</summary>
+    public bool ContainsScreenPoint(Vector2 screenPoint, Camera uiCamera)
+    {
+        return inventoryUI.activeInHierarchy &&
+               RectTransformUtility.RectangleContainsScreenPoint((RectTransform)inventoryUI.transform, screenPoint, uiCamera);
     }
 }

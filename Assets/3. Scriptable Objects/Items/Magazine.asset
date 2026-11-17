@@ -16,6 +16,6 @@ MonoBehaviour:
   description: "\uD0C4\uCC3D\uB9CC\uC73C\uB85C\uB294 \uCD1D\uC744 \uC3E0 \uC218 \uC5C6\uB294
     \uAC8C \uB2F9\uC5F0\uD558\uACA0\uC9C0."
   icon: {fileID: 21300000, guid: b9c04b0a43fe1e44d93a88f2dbee1f18, type: 3}
-  maxStack: 6
+  maxStack: 3
   itemType: 2
   rarity: 5

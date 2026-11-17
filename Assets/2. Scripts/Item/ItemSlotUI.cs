@@ -11,6 +11,7 @@ public class ItemSlotUI : MonoBehaviour
     public void SetData(ItemStack stack)
     {
         currentStack = stack;
+        SetDimmed(false);
 
         if (stack == null || stack.IsEmpty)
         {
@@ -34,4 +35,12 @@ public class ItemSlotUI : MonoBehaviour
     }
 
     public ItemStack GetStack() => currentStack;
+
+    /// <summary>드래그 중인 원래 칸의 아이콘을 흐리게 표시.</summary>
+    public void SetDimmed(bool dimmed)
+    {
+        Color c = iconImage.color;
+        c.a = dimmed ? 0.35f : 1f;
+        iconImage.color = c;
+    }
 }

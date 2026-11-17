@@ -9,7 +9,7 @@ public class PlayerInputHandler : MonoBehaviour
 {
     Camera mainCamera;
     Character character;
-    ObjectOutline currentOutline;
+    IHoverable currentHover;
     [SerializeField] GameObject clickEffect;
 
     void Awake()
@@ -29,7 +29,7 @@ public class PlayerInputHandler : MonoBehaviour
         // UI 위에서는 이동/클릭 처리 안 함
         if (IsPointerOverUI())
         {
-            ClearOutline();
+            SetHover(null);
             return;
         }
 
@@ -42,24 +42,15 @@ public class PlayerInputHandler : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(GameInput.PointerPosition);
         bool hasHit = Physics.Raycast(ray, out RaycastHit hit);
 
-        // 오브젝트 외곽선
-        if (hasHit && hit.collider.TryGetComponent(out ObjectOutline newOutline))
-        {
-            if (currentOutline != newOutline)
-            {
-                ClearOutline();
-                newOutline.SetOutline(true);
-                currentOutline = newOutline;
-            }
-        }
-        else
-        {
-            ClearOutline();
-        }
+        // 마우스를 올린 대상 강조 (오브젝트 테두리, 유닛 적/아군 색, 바닥 아이템 이름표)
+        IHoverable newHover = null;
+        if (hasHit) hit.collider.TryGetComponent(out newHover);
+        SetHover(newHover);
 
         // 이동 (우클릭을 누르고 있는 동안 계속 목적지 갱신)
         if (GameInput.Move.IsPressed() && hasHit)
         {
+            // 이터널 리턴처럼 우클릭을 누른 채 끌다가 오브젝트에 닿아도 다가가서 상호작용한다
             if (hit.collider.TryGetComponent(out IInteractable interactable))
             {
                 character.MoveAndInteract(interactable);
@@ -70,23 +61,27 @@ public class PlayerInputHandler : MonoBehaviour
             }
         }
 
-        // 우클릭 이펙트
-        if (GameInput.Move.WasPressedThisFrame() && hasHit)
+        // 이동 명령 이펙트: 바닥을 우클릭했을 때만 (오브젝트·유닛 클릭에는 표시하지 않음)
+        if (GameInput.Move.WasPressedThisFrame() && hasHit && clickEffect != null
+            && hit.normal.y > 0.5f && !hit.collider.TryGetComponent<IInteractable>(out _))
         {
-            // 살짝 위에 생성해서 지형과 겹치지 않게
-            Instantiate(clickEffect, hit.point + Vector3.up * 0.03f, Quaternion.LookRotation(hit.normal));
+            Instantiate(clickEffect, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
         }
 
         // TODO: 공격 (GameInput.Attack)
     }
 
-    void ClearOutline()
+    void SetHover(IHoverable hover)
     {
-        if (currentOutline != null)
-        {
-            currentOutline.SetOutline(false);
-            currentOutline = null;
-        }
+        // 파괴된 오브젝트(주운 아이템)는 Unity null 비교로 걸러낸다
+        if (currentHover is Object currentObj && currentObj == null)
+            currentHover = null;
+
+        if (currentHover == hover) return;
+
+        currentHover?.SetHovered(false);
+        currentHover = hover;
+        currentHover?.SetHovered(true);
     }
 
     bool IsPointerOverUI()

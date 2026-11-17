@@ -8,6 +8,8 @@ using UnityEngine.Rendering;
 ///   Mark      : 보이는 캐릭터 픽셀에 스텐실을 찍는다 (자기 몸에 가려진 부분은 실루엣이 생기지 않게)
 ///   Silhouette: 깊이 테스트가 Greater(= 다른 물체 뒤)이고 스텐실이 안 찍힌 곳만 색을 그린다
 /// 렌더러 에셋(Renderer Feature) 설정 없이 동작한다.
+/// 서브메시가 여러 개인 렌더러(MMD 모델 등)는 덧붙인 머티리얼이 마지막 서브메시에만 그려져
+/// 자기 몸이 실루엣으로 칠해지므로, 같은 메시·뼈를 쓰는 보조 렌더러 두 개로 모든 서브메시를 처리한다.
 /// </summary>
 [DisallowMultipleComponent]
 public class XRaySilhouette : MonoBehaviour
@@ -36,7 +38,11 @@ public class XRaySilhouette : MonoBehaviour
 
     Material markMaterial;
     Material silhouetteMaterial;
+    // 서브메시가 1개인 렌더러: 머티리얼을 덧붙인다
     readonly List<Renderer> targetRenderers = new List<Renderer>();
+    // 서브메시가 여러 개인 렌더러: 덧붙인 머티리얼은 마지막 서브메시에만 그려지므로
+    // 같은 메시·뼈를 쓰는 보조 렌더러(Mark용, Silhouette용)를 따로 만든다
+    readonly List<GameObject> proxies = new List<GameObject>();
 
     void Awake()
     {
@@ -57,12 +63,69 @@ public class XRaySilhouette : MonoBehaviour
         {
             if (r is not MeshRenderer && r is not SkinnedMeshRenderer) continue;
             if (r.gameObject.layer == ignoreLayer) continue;
-            targetRenderers.Add(r);
+
+            Mesh mesh = GetMesh(r);
+            if (mesh != null && mesh.subMeshCount > 1)
+            {
+                proxies.Add(CreateProxy(r, mesh, markMaterial, "XRay Mark Proxy", ignoreLayer));
+                proxies.Add(CreateProxy(r, mesh, silhouetteMaterial, "XRay Silhouette Proxy", ignoreLayer));
+            }
+            else
+            {
+                targetRenderers.Add(r);
+            }
         }
+    }
+
+    static Mesh GetMesh(Renderer r)
+    {
+        if (r is SkinnedMeshRenderer skinned) return skinned.sharedMesh;
+        var filter = r.GetComponent<MeshFilter>();
+        return filter != null ? filter.sharedMesh : null;
+    }
+
+    /// <summary>원본과 같은 메시(스키닝이면 같은 뼈)를 모든 서브메시에 같은 머티리얼로 그리는 보조 렌더러.</summary>
+    static GameObject CreateProxy(Renderer source, Mesh mesh, Material material, string proxyName, int layer)
+    {
+        var go = new GameObject(proxyName);
+        go.layer = layer; // 다른 기능(외곽선, 이 컴포넌트)이 보조 렌더러를 다시 잡지 않도록
+        go.transform.SetParent(source.transform, false);
+
+        var mats = new Material[mesh.subMeshCount];
+        for (int i = 0; i < mats.Length; i++) mats[i] = material;
+
+        Renderer proxy;
+        if (source is SkinnedMeshRenderer skinned)
+        {
+            var smr = go.AddComponent<SkinnedMeshRenderer>();
+            smr.sharedMesh = mesh;
+            smr.bones = skinned.bones;
+            smr.rootBone = skinned.rootBone;
+            smr.localBounds = skinned.localBounds;
+            smr.updateWhenOffscreen = skinned.updateWhenOffscreen;
+            smr.quality = skinned.quality;
+            for (int i = 0; i < mesh.blendShapeCount; i++)
+                smr.SetBlendShapeWeight(i, skinned.GetBlendShapeWeight(i));
+            proxy = smr;
+        }
+        else
+        {
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            proxy = go.AddComponent<MeshRenderer>();
+        }
+
+        proxy.sharedMaterials = mats;
+        proxy.shadowCastingMode = ShadowCastingMode.Off;
+        proxy.receiveShadows = false;
+        go.SetActive(false);
+        return go;
     }
 
     void OnEnable()
     {
+        foreach (var p in proxies)
+            if (p != null) p.SetActive(true);
+
         foreach (var r in targetRenderers)
         {
             if (r == null) continue;
@@ -75,6 +138,9 @@ public class XRaySilhouette : MonoBehaviour
 
     void OnDisable()
     {
+        foreach (var p in proxies)
+            if (p != null) p.SetActive(false);
+
         foreach (var r in targetRenderers)
         {
             if (r == null) continue;
@@ -87,6 +153,8 @@ public class XRaySilhouette : MonoBehaviour
 
     void OnDestroy()
     {
+        foreach (var p in proxies)
+            if (p != null) Destroy(p);
         if (markMaterial != null) Destroy(markMaterial);
         if (silhouetteMaterial != null) Destroy(silhouetteMaterial);
     }

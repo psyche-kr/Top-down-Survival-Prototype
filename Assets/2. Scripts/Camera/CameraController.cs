@@ -1,5 +1,11 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// 쿼터뷰 카메라. 캐릭터(NavMeshAgent)가 이번 프레임 이동을 끝낸 뒤 따라가도록 LateUpdate에서 움직인다.
+/// (Update에서 따라가면 이동 전/후 위치를 번갈아 잡아 Space 따라가기 중 화면이 떨린다)
+/// 머리 위 UI 등 카메라 위치로 화면 좌표를 계산하는 스크립트보다 먼저 실행되도록 실행 순서를 앞당긴다.
+/// </summary>
+[DefaultExecutionOrder(-100)]
 public class CameraController : MonoBehaviour
 {
     [SerializeField, Tooltip("카메라 이동속도")] float moveSpeed = 50f;
@@ -27,7 +33,7 @@ public class CameraController : MonoBehaviour
         targetPos = transform.position;
     }
 
-    void Update()
+    void LateUpdate()
     {
         CameraToggle();
 

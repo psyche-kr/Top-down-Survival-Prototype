@@ -17,4 +17,16 @@ public class ItemStack
         this.item = item;
         this.amount = amount;
     }
+
+    public void Set(Item item, int amount)
+    {
+        this.item = item;
+        this.amount = amount;
+    }
+
+    public void Clear()
+    {
+        item = null;
+        amount = 0;
+    }
 }

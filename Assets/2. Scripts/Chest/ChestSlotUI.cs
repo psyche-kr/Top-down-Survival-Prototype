@@ -2,13 +2,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class ChestSlotUI : 
+/// <summary>
+/// 상자 한 칸. 왼클릭하면 인벤토리로 습득하고, 드래그해서 인벤토리 칸이나 바닥에 놓을 수 있다.
+/// </summary>
+public class ChestSlotUI :
     MonoBehaviour,
     IPointerEnterHandler,
-    IPointerExitHandler
+    IPointerExitHandler,
+    IPointerClickHandler,
+    IBeginDragHandler,
+    IDragHandler,
+    IEndDragHandler
 {
     ItemSlotUI view;
-    Button button;
     Chest currentChest;
 
     [SerializeField] Sprite filledBackground;
@@ -19,7 +25,6 @@ public class ChestSlotUI :
     void Awake()
     {
         view = GetComponent<ItemSlotUI>();
-        button = GetComponent<Button>();
         backgroundImage = GetComponent<Image>();
     }
 
@@ -29,45 +34,57 @@ public class ChestSlotUI :
 
         view.SetData(stack);
 
-        backgroundImage.sprite = 
-            stack == null || stack.IsEmpty 
+        backgroundImage.sprite =
+            stack == null || stack.IsEmpty
             ? emptyBackground
             : filledBackground;
-
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(OnClick);
     }
 
-    void OnClick()
+    // 누른 칸과 드래그한 칸이 같으면 EventSystem은 드래그 뒤에도 클릭을 보낸다.
+    // 그 클릭으로 습득하면 칸이 다시 만들어져 OnEndDrag가 오지 않으므로, 드래그였다면 클릭은 무시한다.
+    public void OnPointerClick(PointerEventData eventData)
     {
+        if (eventData.button != PointerEventData.InputButton.Left) return;
+        if (eventData.dragging) return;
+
         ItemStack stack = view.GetStack();
+        if (!currentChest.HasStack(stack)) return;
 
-        if (stack == null || stack.IsEmpty)
-            return;
+        // 인벤토리에 공간이 없으면 경고만 띄우고 상자에 남긴다
+        if (!PlayerInventoryManager.Instance.AddItem(stack.item, stack.amount)) return;
 
-        // 아이템 획득 가능한지 확인 (인벤토리 공간 체크)
-        bool success = PlayerInventoryManager.Instance.AddItem(stack.item);
-        if (!success) return;
+        ItemTooltipUI.Instance.Hide();
+        currentChest.RemoveStack(stack);
+    }
 
-        // 아이템 획득시 슬롯 밀기
-        int index = currentChest.currentItems.IndexOf(stack); 
-        if (index < 0) return;
-        currentChest.currentItems.RemoveAt(index);
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Left) return;
 
-        // 슬롯 민 후에 빈 슬롯 추가
-        currentChest.currentItems.Add(new ItemStack()); 
+        ItemStack stack = view.GetStack();
+        if (stack == null || stack.IsEmpty) return;
 
-        ChestUIManager.Instance.RefreshChestUI(currentChest); // UI 갱신
-        ItemTooltipUI.Instance.Hide(); // 툴팁 숨기기
+        ItemDragManager.Instance.BeginChestDrag(currentChest, stack, view, eventData);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        ItemDragManager.Instance.UpdateDrag(eventData);
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        ItemDragManager.Instance.EndDrag(eventData);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        var stack = view.GetStack();
+        if (ItemDragManager.Instance != null && ItemDragManager.Instance.IsDragging) return;
 
+        var stack = view.GetStack();
         if (stack == null || stack.IsEmpty) return;
 
-        ItemTooltipUI.Instance.Show(stack.item, TooltipOwner.Chest);
+        ItemTooltipUI.Instance.Show(stack, TooltipOwner.Chest);
     }
 
     public void OnPointerExit(PointerEventData eventData)

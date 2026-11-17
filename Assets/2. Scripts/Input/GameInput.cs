@@ -21,8 +21,9 @@ public static class GameInput
 
     // UI
     public static InputAction Point { get; private set; }              // 마우스 위치
-    public static InputAction ToggleInventory { get; private set; }    // Tab 인벤토리
     public static InputAction Cancel { get; private set; }             // Esc 닫기
+    public static InputAction Modifier { get; private set; }           // Ctrl (Ctrl+우클릭 즉시 버리기 등)
+    public static InputAction AltModifier { get; private set; }        // Alt (Alt+좌클릭 바닥 아이템 줍기)
 
     /// <summary>현재 마우스(포인터) 화면 좌표</summary>
     public static Vector2 PointerPosition => Point.ReadValue<Vector2>();
@@ -45,8 +46,9 @@ public static class GameInput
         UI = new InputActionMap("UI");
         Point = UI.AddAction("Point", InputActionType.PassThrough, "<Pointer>/position");
         Point.expectedControlType = "Vector2";
-        ToggleInventory = UI.AddAction("ToggleInventory", InputActionType.Button, "<Keyboard>/tab");
         Cancel = UI.AddAction("Cancel", InputActionType.Button, "<Keyboard>/escape");
+        Modifier = UI.AddAction("Modifier", InputActionType.Button, "<Keyboard>/ctrl");
+        AltModifier = UI.AddAction("AltModifier", InputActionType.Button, "<Keyboard>/alt");
 
         Gameplay.Enable();
         UI.Enable();

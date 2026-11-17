@@ -97,3 +97,11 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# 재배포 금지 외부 에셋 (로컬에만 둠)
+# MMD4Mecanim: 라이선스상 재배포 불가, iOS 라이브러리가 GitHub 100MB 한도 초과
+/[Aa]ssets/MMD4Mecanim/
+/[Aa]ssets/MMD4Mecanim.meta
+# Yuki 모델: 공개 업로드 금지
+/[Aa]ssets/1. Assets/Yuki/
+/[Aa]ssets/1. Assets/Yuki.meta

@@ -21,17 +21,25 @@ public class Character : MonoBehaviour
     {
         if (pendingInteract == null || targetCollider == null) return;
 
-        Vector3 closest = targetCollider.ClosestPoint(transform.position);
-
-        float sqrDist = (transform.position - closest).sqrMagnitude;
-
-        if (sqrDist <= interactRange * interactRange)
+        if (IsInRange(pendingInteract))
         {
-            IInteractable target = pendingInteract;
-            CancelInteract();
-            Movement.Stop();
-            target.Interact(this);
+            InteractNow(pendingInteract);
         }
+    }
+
+    /// <summary>대상이 상호작용(습득) 범위 안인지.</summary>
+    public bool IsInRange(IInteractable interactable)
+    {
+        float range = interactable.GetInteractRange();
+        Vector3 closest = interactable.GetCollider().ClosestPoint(transform.position);
+        return (transform.position - closest).sqrMagnitude <= range * range;
+    }
+
+    void InteractNow(IInteractable target)
+    {
+        CancelInteract();
+        Movement.Stop();
+        target.Interact(this);
     }
 
     /// <summary>지점으로 이동. 예약된 상호작용은 취소된다.</summary>
@@ -50,6 +58,13 @@ public class Character : MonoBehaviour
 
     public void MoveAndInteract(IInteractable interactable)
     {
+        // 이미 범위 안이면 더 다가가지 않고 바로 상호작용
+        if (IsInRange(interactable))
+        {
+            InteractNow(interactable);
+            return;
+        }
+
         pendingInteract = interactable;
         interactRange = interactable.GetInteractRange();
         targetCollider = interactable.GetCollider();
