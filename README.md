@@ -19,6 +19,8 @@
 
 - **입력**: Unity Input System만 사용합니다(Active Input Handling = Input System Package). 키 바인딩은 `GameInput`(`Assets/2. Scripts/Input`)에 모아 두고, 다른 스크립트는 `GameInput.Move.IsPressed()`처럼 액션만 읽습니다. 플레이어 입력은 `PlayerInputHandler`가 받아 `Character`에 명령으로 넘깁니다.
 
+- **가려짐 실루엣** (`XRaySilhouette`): 캐릭터가 오브젝트 뒤에 가려지면 가려진 부분만 반투명 실루엣으로 보입니다. 캐릭터 렌더러에 머티리얼 두 개를 덧붙여, 먼저 보이는 픽셀에 스텐실을 찍고(자기 몸에 가려진 부분 제외) 깊이 테스트가 `Greater`인 곳에만 색을 그립니다. 셰이더는 `Assets/5. Shaders/XRaySilhouette.shader`이고 Renderer Feature 설정 없이 동작합니다. 색은 인스펙터나 `SetColor`로 바꿀 수 있습니다.
+
 ### 카메라 (`CameraController`)
 
 - 화면 가장자리에 마우스를 가져가면 그 방향으로 카메라가 움직이고(대각선은 정규화), 맵 범위를 벗어나지 않도록 값을 제한합니다.

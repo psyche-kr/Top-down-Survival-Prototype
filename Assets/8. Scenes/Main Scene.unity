@@ -636,6 +636,7 @@ GameObject:
   - component: {fileID: 363734695}
   - component: {fileID: 363734702}
   - component: {fileID: 363734701}
+  - component: {fileID: 363734703}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -785,6 +786,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterMovement
   config: {fileID: 11400000, guid: 1feb46ad78200aa40805784278df5c26, type: 2}
+--- !u!114 &363734703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363734694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4781e157919e4771a5379ea66a3bc365, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::XRaySilhouette
+  shader: {fileID: 4800000, guid: 270057a011e04b328c2222c17cc82764, type: 3}
+  color: {r: 0.25, g: 0.75, b: 1, a: 0.6}
+  rimPower: 2
 --- !u!114 &363734702
 MonoBehaviour:
   m_ObjectHideFlags: 0
